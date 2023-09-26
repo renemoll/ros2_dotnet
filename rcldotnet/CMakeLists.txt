@@ -67,6 +67,9 @@ set(CS_SOURCES
   ServiceDefinitionStaticMemberCache.cs
   Subscription.cs
   Timer.cs
+  ParameterInfrastructure/Parameter.cs
+  ParameterInfrastructure/ParameterBool.cs
+  ParameterInfrastructure/ParameterServer.cs
 )
 
 find_package(rcldotnet_common REQUIRED)
@@ -74,6 +77,7 @@ find_package(rcldotnet_common REQUIRED)
 set(_assemblies_dep_dlls
   ${action_msgs_ASSEMBLIES_DLL}
   ${builtin_interfaces_ASSEMBLIES_DLL}
+  ${rcl_interfaces_ASSEMBLIES_DLL}
   ${rcldotnet_common_ASSEMBLIES_DLL}
   ${unique_identifier_msgs_ASSEMBLIES_DLL}
 )
