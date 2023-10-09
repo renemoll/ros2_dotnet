@@ -47,7 +47,7 @@ namespace ROS2
         internal ParameterHandler(Node node)
         {
             _node = node;
-            _publisherEvent = node.CreatePublisher<ParameterEvent>("/parameter_events");
+            _publisherEvent = node.CreatePublisher<ParameterEvent>("/parameter_events", QosProfile.ParameterEventsProfile);
 
             node.CreateService<DescribeParameters, DescribeParameters_Request, DescribeParameters_Response>("~/describe_parameters", OnDescribeParametersServiceRequest);
             node.CreateService<GetParameterTypes, GetParameterTypes_Request, GetParameterTypes_Response>("~/get_parameter_types", OnGetParameterTypesServiceRequest);
