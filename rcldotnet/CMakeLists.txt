@@ -69,6 +69,7 @@ set(CS_SOURCES
   Subscription.cs
   Timer.cs
   ParameterHandling/ParameterHandler.cs
+  ParameterHandling/SafeRclParamsHandle.cs
   ParameterHandling/Exceptions/InvalidParameterTypeException.cs
   ParameterHandling/Exceptions/ParameterException.cs
   ParameterHandling/Exceptions/ParameterImmutableException.cs
