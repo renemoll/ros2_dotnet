@@ -46,7 +46,6 @@ set(CS_SOURCES
   MessageStaticMemberCache.cs
   Node.cs
   Publisher.cs
-  QosProfile.cs
   RCLdotnet.cs
   RCLExceptionHelper.cs
   RCLRet.cs
@@ -76,6 +75,8 @@ set(CS_SOURCES
   ParameterHandling/Exceptions/ParameterImmutableException.cs
   ParameterHandling/Exceptions/ParameterNotDeclaredException.cs
   ParameterHandling/Exceptions/ParameterTypeMismatchException.cs
+  QoS/QosProfile.cs
+  QoS/QoSProfileDelegates.cs
 )
 
 find_package(rcldotnet_common REQUIRED)
@@ -108,6 +109,7 @@ add_library(${PROJECT_NAME}_native SHARED
   rcldotnet_publisher.c
   rcldotnet_timer.c
   rcldotnet_params.c
+  rcldotnet_qos_profile.c
   rcldotnet.c
 )
 
