@@ -18,6 +18,7 @@ find_package(rmw REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
 find_package(rosidl_typesupport_c REQUIRED)
 find_package(rosidl_typesupport_interface REQUIRED)
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
 find_package(dotnet_cmake_module REQUIRED)
 find_package(DotNETExtra REQUIRED)
@@ -140,7 +141,7 @@ set_property(
 if(_generated_cs_files)
   add_custom_command(
     OUTPUT ${_generated_cs_files} ${_generated_h_files} ${_generated_c_ts_files}
-    COMMAND ${PYTHON_EXECUTABLE} ${rosidl_generator_dotnet_BIN}
+    COMMAND ${Python3_EXECUTABLE} ${rosidl_generator_dotnet_BIN}
     --generator-arguments-file "${generator_arguments_file}"
     --typesupport-impls "${_typesupport_impls}"
     DEPENDS ${target_dependencies}
