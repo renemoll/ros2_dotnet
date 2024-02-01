@@ -18,6 +18,10 @@ find_package(dotnet_cmake_module REQUIRED)
 set(CSHARP_TARGET_FRAMEWORK "netcoreapp6.0")
 find_package(DotNETExtra REQUIRED)
 
+if (BUILD_STANDALONE)
+  set(CSBUILD_BUILD_FLAGS "build")
+endif()
+
 set(_assemblies_dep_dlls
     ${rcldotnet_common_ASSEMBLIES_DLL}
     ${rcldotnet_ASSEMBLIES_DLL}
@@ -67,12 +71,23 @@ add_dotnet_executable(rcldotnet_example_action_client
   ${_assemblies_dep_dlls}
 )
 
-install_dotnet(rcldotnet_talker DESTINATION lib/${PROJECT_NAME}/dotnet)
-install_dotnet(rcldotnet_listener DESTINATION lib/${PROJECT_NAME}/dotnet)
-install_dotnet(rcldotnet_example_service DESTINATION lib/${PROJECT_NAME}/dotnet)
-install_dotnet(rcldotnet_example_client DESTINATION lib/${PROJECT_NAME}/dotnet)
-install_dotnet(rcldotnet_guard_condition DESTINATION lib/${PROJECT_NAME}/dotnet)
-install_dotnet(rcldotnet_example_action_server DESTINATION lib/${PROJECT_NAME}/dotnet)
-install_dotnet(rcldotnet_example_action_client DESTINATION lib/${PROJECT_NAME}/dotnet)
+macro(install_example _target)
+  if (BUILD_STANDALONE)
+    set_target_properties(${_target}
+      PROPERTIES
+        OUTPUT_PATH ${CSHARP_BUILDER_OUTPUT_PATH}/${CSHARP_TARGET_FRAMEWORK}/
+    )
+  endif()
+
+  install_dotnet(${_target} DESTINATION lib/${PROJECT_NAME}/dotnet)
+endmacro()
+
+install_example(rcldotnet_talker DESTINATION lib/${PROJECT_NAME}/dotnet)
+install_example(rcldotnet_listener DESTINATION lib/${PROJECT_NAME}/dotnet)
+install_example(rcldotnet_example_service DESTINATION lib/${PROJECT_NAME}/dotnet)
+install_example(rcldotnet_example_client DESTINATION lib/${PROJECT_NAME}/dotnet)
+install_example(rcldotnet_guard_condition DESTINATION lib/${PROJECT_NAME}/dotnet)
+install_example(rcldotnet_example_action_server DESTINATION lib/${PROJECT_NAME}/dotnet)
+install_example(rcldotnet_example_action_client DESTINATION lib/${PROJECT_NAME}/dotnet)
 
 ament_package()

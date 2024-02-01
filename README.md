@@ -82,6 +82,10 @@ git clone --branch foxy https://github.com/ros2/rosidl src\ros2\rosidl
 colcon build --merge-install
 ```
 
+*Note*: for standalone builds use:
+```
+colcon build --cmake-args "-Wno-dev" "-DBUILD_STANDALONE=ON" --merge-install
+```
 
 Linux
 -----

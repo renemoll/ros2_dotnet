@@ -302,5 +302,10 @@ if(NOT rosidl_generate_interfaces_SKIP_INSTALL)
 
     install_dotnet(${PROJECT_NAME}_assemblies DESTINATION "lib/${PROJECT_NAME}/dotnet")
     ament_export_assemblies_dll("lib/${PROJECT_NAME}/dotnet/${PROJECT_NAME}_assemblies.dll")
+
+    if (BUILD_STANDALONE)
+      install_dotnet(${PROJECT_NAME}_assemblies DESTINATION "bin")
+      ament_export_assemblies_dll("bin/${PROJECT_NAME}_assemblies.dll")
+    endif()
   endif()
 endif()

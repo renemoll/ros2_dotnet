@@ -164,7 +164,15 @@ if(BUILD_TESTING)
   add_dependencies(test_messages ${PROJECT_NAME}_assemblies ${_target_name})
 
   install_dotnet(test_messages DESTINATION lib/${PROJECT_NAME}/dotnet )
+endif()
 
+option(BUILD_STANDALONE "Build standalone DLLs" Off)
+
+if (BUILD_STANDALONE)
+  install_dotnet(${PROJECT_NAME}_assemblies DESTINATION "bin")
+  ament_export_assemblies_dll("bin/${PROJECT_NAME}_assemblies.dll")
+
+  include("cmake/standalone.cmake")
 endif()
 
 ament_package()
