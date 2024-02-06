@@ -28,4 +28,11 @@ namespace ROS2
 
         void __WriteToHandle(IntPtr messageHandle);
     }
+
+    public interface MessageWithHeader : IRosMessage
+    {
+        void SetHeaderFrame(string frameID);
+        string GetHeaderFrame();
+        void UpdateHeaderTime(int sec, uint nanosec);
+    }
 }

@@ -26,6 +26,7 @@ from rosidl_parser.definition import AbstractString
 from rosidl_parser.definition import AbstractWString
 from rosidl_parser.definition import AbstractNestedType
 from rosidl_parser.definition import AbstractSequence
+from rosidl_parser.definition import Array
 from rosidl_parser.definition import BasicType
 from rosidl_parser.definition import IdlContent
 from rosidl_parser.definition import IdlLocator
@@ -137,8 +138,12 @@ def get_builtin_dotnet_type(type_, use_primitives=True):
 def get_dotnet_type(type_, use_primitives=True):
     if isinstance(type_, AbstractGenericString):
         return 'System.String'
+
     if isinstance(type_, NamespacedType):
         return '.'.join(type_.namespaced_name())
+
+    if isinstance(type_, (AbstractSequence, Array)):
+        return get_dotnet_type(type_.value_type) + "[]"
 
     return get_builtin_dotnet_type(type_.typename, use_primitives=use_primitives)
 
@@ -159,8 +164,9 @@ def msg_type_to_c(type_):
 def convert_lower_case_underscore_to_camel_case(word):
     return ''.join(x.capitalize() or '_' for x in word.split('_'))
 
-def get_field_name(type_name, field_name):
-    if convert_lower_case_underscore_to_camel_case(field_name) == type_name:
+def get_field_name(type_name, field_name, class_name=None):
+    name = convert_lower_case_underscore_to_camel_case(field_name)
+    if (name == type_name) or (class_name is not None and name == class_name):
         return "{0}_".format(type_name)
     else:
-        return convert_lower_case_underscore_to_camel_case(field_name)
+        return name

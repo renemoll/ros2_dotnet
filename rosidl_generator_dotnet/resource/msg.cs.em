@@ -6,6 +6,7 @@ from rosidl_generator_dotnet import get_dotnet_type
 from rosidl_generator_dotnet import get_builtin_dotnet_type
 from rosidl_generator_dotnet import constant_value_to_dotnet
 
+from rosidl_parser.definition import AbstractNestableType
 from rosidl_parser.definition import AbstractNestedType
 from rosidl_parser.definition import AbstractGenericString
 from rosidl_parser.definition import AbstractString
@@ -17,6 +18,11 @@ from rosidl_parser.definition import NamespacedType
 
 type_name = message.structure.namespaced_type.name
 msg_typename = '%s__%s' % ('__'.join(message.structure.namespaced_type.namespaces), type_name)
+parent_interface = "global::ROS2.IRosMessage"
+header_type = "std_msgs.msg.Header"
+for member in message.structure.members:
+  if get_dotnet_type(member.type) == header_type:
+    parent_interface = "global::ROS2.MessageWithHeader"
 
 if 'action_interface' not in locals():
     action_interface = None
@@ -27,7 +33,7 @@ additional_interfaces_str = ', ' + action_interface if action_interface is not N
 namespace @('.'.join(message.structure.namespaced_type.namespaces))
 {
 
-public class @(type_name) : global::ROS2.IRosMessage@(additional_interfaces_str) {
+public class @(type_name) : @(parent_interface)@(additional_interfaces_str) {
     private static readonly DllLoadUtils dllLoadUtils;
 
 @[for member in message.structure.members]@
@@ -377,15 +383,36 @@ public class @(type_name) : global::ROS2.IRosMessage@(additional_interfaces_str)
 @[end for]@
 
 @[for member in message.structure.members]@
-@[    if isinstance(member.type, Array)]@
-    public @(get_dotnet_type(member.type.value_type))[] @(get_field_name(type_name, member.name)) { get; set; }
-@[    elif isinstance(member.type, AbstractSequence)]@
-    public List<@(get_dotnet_type(member.type.value_type))> @(get_field_name(type_name, member.name)) { get; set; }
-@[    elif isinstance(member.type, AbstractWString)]@
-// TODO: Unicode types are not supported
-@[    else]@
+@[  if isinstance(member.type, AbstractNestableType)]@
     public @(get_dotnet_type(member.type)) @(get_field_name(type_name, member.name)) { get; set; }
+@[    if get_dotnet_type(member.type) == header_type]@
+
+    // Generic interface for all messages with headers
+    public void SetHeaderFrame(string frameID)
+    {
+        @(get_field_name(member.type, member.name, type_name)).FrameId = frameID;
+    }
+
+    public string GetHeaderFrame()
+    {
+        return @(get_field_name(member.type, member.name, type_name)).FrameId;
+    }
+
+    public void UpdateHeaderTime(int sec, uint nanosec)
+    {
+        @(get_field_name(member.type, member.name, type_name)).Stamp.Sec = sec;
+        @(get_field_name(member.type, member.name, type_name)).Stamp.Nanosec = nanosec;
+    }
 @[    end if]@
+@[  elif isinstance(member.type, Array)]@
+    public @(get_dotnet_type(member.type.value_type))[] @(get_field_name(type_name, member.name)) { get; set; }
+@[  elif isinstance(member.type, AbstractSequence)]@
+    public List<@(get_dotnet_type(member.type.value_type))> @(get_field_name(type_name, member.name)) { get; set; }
+@[  elif isinstance(member.type, AbstractWString)]@
+// TODO: Unicode types are not supported
+@[  else]@
+    public @(get_dotnet_type(member.type)) @(get_field_name(type_name, member.name)) { get; set; }
+@[  end if]@
 @[end for]@
 
 @[if action_interface is not None and (
